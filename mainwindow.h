@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <iostream>
+//Работа с умными указателями
+#include <memory>
 
 namespace Ui {
 class MainWindow;
