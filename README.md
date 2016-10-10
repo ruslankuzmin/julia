@@ -1,2 +1,5 @@
 # julia
-Artificial intelligence project and my experiments and education
+Artificial intelligence project in early stage working
+
+# Юля
+Проект искусственного интеллекта на ранней стадии разработки
