@@ -1,11 +1,15 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <QWebEngineView>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication app(argc, argv);
+    QWebEngineView view;
+    view.setUrl(QUrl(QStringLiteral("qrc:///gui-html-files/index.html")));
+    view.resize(1024, 600);
+    view.show();
 
-    return a.exec();
+    return app.exec();
 }

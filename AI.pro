@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
 
 TARGET = AI
 TEMPLATE = app
@@ -21,3 +21,6 @@ FORMS    += mainwindow.ui
 
 #Добавление возможностей стандарта C++ 11
 CONFIG += c++11
+
+RESOURCES += \
+    resources.qrc
