@@ -1,4 +1,3 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <QWebEngineView>
 
@@ -10,6 +9,5 @@ int main(int argc, char *argv[])
     view.setUrl(QUrl(QStringLiteral("qrc:///gui-html-files/index.html")));
     view.resize(1024, 600);
     view.show();
-
     return app.exec();
 }

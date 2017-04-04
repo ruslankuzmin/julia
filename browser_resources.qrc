@@ -1,5 +1,35 @@
 <RCC>
     <qresource prefix="/">
         <file>gui-html-files/index.html</file>
+        <file>gui-html-files/images/audio.png</file>
+        <file>gui-html-files/images/bellaCoola.jpg</file>
+        <file>gui-html-files/images/camera.png</file>
+        <file>gui-html-files/images/comport.png</file>
+        <file>gui-html-files/images/flower.jpg</file>
+        <file>gui-html-files/images/games.png</file>
+        <file>gui-html-files/images/girl.png</file>
+        <file>gui-html-files/images/internet.png</file>
+        <file>gui-html-files/images/keyboard.png</file>
+        <file>gui-html-files/images/keyboard2.png</file>
+        <file>gui-html-files/images/mic.png</file>
+        <file>gui-html-files/images/mouse.png</file>
+        <file>gui-html-files/images/mtRainier.jpg</file>
+        <file>gui-html-files/images/nintendo.png</file>
+        <file>gui-html-files/images/novideo.png</file>
+        <file>gui-html-files/images/picture.png</file>
+        <file>gui-html-files/images/processor.png</file>
+        <file>gui-html-files/images/screen.png</file>
+        <file>gui-html-files/images/screen1.png</file>
+        <file>gui-html-files/images/screen2.png</file>
+        <file>gui-html-files/images/start.png</file>
+        <file>gui-html-files/images/status.png</file>
+        <file>gui-html-files/images/status-busy.png</file>
+        <file>gui-html-files/images/stop.png</file>
+        <file>gui-html-files/images/text.png</file>
+        <file>gui-html-files/images/video.png</file>
+        <file>gui-html-files/images/volume.png</file>
+        <file>gui-html-files/jquery.min.js</file>
+        <file>gui-html-files/main.js</file>
+        <file>gui-html-files/style.css</file>
     </qresource>
 </RCC>
