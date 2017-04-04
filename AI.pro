@@ -11,10 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
 TARGET = AI
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    artificial_intelligence.cpp
 
 #Добавление возможностей стандарта C++ 11
 CONFIG += c++11
 
 RESOURCES += \
     browser_resources.qrc
+
+HEADERS += \
+    artificial_intelligence.h
