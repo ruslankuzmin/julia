@@ -1,0 +1,20 @@
+//Gnu Scientific Library - for Newton interpolation
+//#include "3rdparty/gsl/polifitgsl.h"
+/*
+#include "3rdparty/prettyprint.hpp"
+//For server
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<netdb.h>
+#include<signal.h>
+#include<fcntl.h>
+
+#include <thread>
+#include <mutex>
+#include <chrono>
+
+#include "AL/al.h"
+#include "AL/alc.h"
+*/

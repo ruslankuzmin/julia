@@ -4,21 +4,27 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui webenginewidgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = AI
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    artificial_intelligence.cpp
+LIBS += -lcairo -lX11
 
-#Добавление возможностей стандарта C++ 11
+SOURCES += main.cpp \
+    artificial_intelligence.cpp \
+    target_window.cpp
+
 CONFIG += c++11
 
 RESOURCES += \
     browser_resources.qrc
 
 HEADERS += \
-    artificial_intelligence.h
+    artificial_intelligence.h \
+    target_window.h
+
+DISTFILES += \
+    CodeTrash
