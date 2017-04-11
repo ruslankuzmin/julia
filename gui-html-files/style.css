@@ -2,12 +2,17 @@
 {
 font-family: 'Jura', sans-serif;
 }
-.frames
+.screenshots
 {
 width:80%;
 height:70%;
 }
 
+.screenshot
+{
+width:200px;
+height:200px;
+}
 .table_input_output img
 {
 width:24px;

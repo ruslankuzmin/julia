@@ -31,7 +31,7 @@ Window TargetWindow::getX11WindowByTitle(Display *dpy, Window top, char *name)
     return (w);
 }
 
-void TargetWindow::saveScreenShot(int screenID)
+void TargetWindow::getScreenShot(int screenID,std::vector< std::vector < RGB > > & output)
 {
     Display *disp;
     XWindowAttributes watts;
@@ -50,8 +50,13 @@ void TargetWindow::saveScreenShot(int screenID)
     int green_shift= get_shift(image->green_mask);
     int blue_shift= get_shift(image->blue_mask);
 
+
+    output.resize(height);
     for (unsigned int y = 0; y < height; ++y)
     {
+        output[y].clear();
+        std::vector < RGB > tmp;
+        output.push_back(tmp);
         for (unsigned int x = 0; x < width; ++x) {
             unsigned long pixel = XGetPixel(image, x, y);
             unsigned char red = (image->red_mask & pixel) >> red_shift;
@@ -60,9 +65,14 @@ void TargetWindow::saveScreenShot(int screenID)
             data[y * stride + x * 4 + 0]=blue;
             data[y * stride + x * 4 + 1]=green;
             data[y * stride + x * 4 + 2]=red;
+            RGB color;
+            color.b = blue;
+            color.g = green;
+            color.r = red;
+            output[y].push_back(color);
         }
     }
-    std::string filename="output/"+std::to_string(screenID)+".png";
+    std::string filename="output/screenshots/screenshot-"+std::to_string(screenID)+".png";
     surface = cairo_image_surface_create_for_data(data,CAIRO_FORMAT_RGB24,width,height,stride);
     cairo_surface_write_to_png(surface,filename.c_str());
     cairo_surface_destroy(surface);

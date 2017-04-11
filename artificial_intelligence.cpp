@@ -9,25 +9,13 @@ ArtificialIntelligence::ArtificialIntelligence()
     sleep(3);
     //Команда ОС - Активация окна с игрой
     exec("wmctrl -a 'FCEUX 2.2.2'");
-    TargetWindow screenShot("FCEUX 2.2.2");
     //Ждать 3 секунды
     sleep(3);
     //Команда ОС - Нажатие Enter
     action(5,time_action);
     //Ждать 3 секунды
     sleep(4);
-    //Main loop
-    int i = 1;
-    while(i++){
-        exec("wmctrl -a 'FCEUX 2.2.2");
-        int act=rand() % 3;
-        int time_duration=rand() % 5;
-        //Совершение выбранного переменной act действия в течении времени time
-        action(act,0.1*time_duration);
-        screenShot.saveScreenShot(i);
-        sleep(3);
-    }
-
+    this->MainLoop();
 }
 
 ///Выполнение команды операционной системы от имени программы с сохранением результата
@@ -104,6 +92,31 @@ int ArtificialIntelligence::action(int a,float time)
 ArtificialIntelligence::~ArtificialIntelligence()
 {
 
+}
+
+void ArtificialIntelligence::MainLoop()
+{
+    TargetWindow screenShot("FCEUX 2.2.2");
+    //Main loop
+    int i = 0;
+    while(1==1){
+        exec("wmctrl -a 'FCEUX 2.2.2'");
+        int act=rand() % 3;
+        int time_duration=rand() % 5;
+        //Совершение выбранного переменной act действия в течении времени time
+        action(act,0.1*time_duration);
+        std::vector< std::vector < RGB > > output;
+        screenShot.getScreenShot(i,output);
+        analyse(output);
+        ++i;
+        sleep(3);
+    }
+}
+
+int ArtificialIntelligence::analyse(std::vector<std::vector<RGB> > &output)
+{
+    std::cout<<"output.size:"<<output.size()<<std::endl;
+    std::cout<<"output[1].size:"<<output[1].size()<<std::endl;
 }
 
 

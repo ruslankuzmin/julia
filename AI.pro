@@ -24,7 +24,8 @@ RESOURCES += \
 
 HEADERS += \
     artificial_intelligence.h \
-    target_window.h
+    target_window.h \
+    data_types.h
 
 DISTFILES += \
     CodeTrash
