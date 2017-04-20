@@ -46,15 +46,15 @@ void TargetWindow::getScreenShot(int screenID,std::vector< std::vector < RGB > >
     image = XGetImage(disp, window, watts.x, watts.y, width, height, AllPlanes,ZPixmap);
     stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, width);
     unsigned char * data = (unsigned char *) malloc (stride * height);
-    int red_shift= get_shift(image->red_mask);
-    int green_shift= get_shift(image->green_mask);
-    int blue_shift= get_shift(image->blue_mask);
+    int red_shift = get_shift(image->red_mask);
+    int green_shift = get_shift(image->green_mask);
+    int blue_shift = get_shift(image->blue_mask);
 
+    std::cout<<"width:"<<width<<"height:"<<height<<std::endl;
 
-    output.resize(height);
+    output.clear();
     for (unsigned int y = 0; y < height; ++y)
     {
-        output[y].clear();
         std::vector < RGB > tmp;
         output.push_back(tmp);
         for (unsigned int x = 0; x < width; ++x) {

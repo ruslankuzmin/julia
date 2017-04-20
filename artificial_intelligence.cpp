@@ -3,41 +3,29 @@
 ArtificialIntelligence::ArtificialIntelligence()
 {
     double time_action = 0.1;
-    //Команда ОС - Закрыть другие окна с игрой
     system("fceux ../input/nintendo_games/Mario.nes &");
-    //Ждать 3 секунды
+    //Ждать
     sleep(3);
     //Команда ОС - Активация окна с игрой
     exec("wmctrl -a 'FCEUX 2.2.2'");
-    //Ждать 3 секунды
+    //Ждать
     sleep(3);
     //Команда ОС - Нажатие Enter
     action(5,time_action);
-    //Ждать 3 секунды
+    //Ждать
     sleep(4);
-    this->MainLoop();
 }
 
 ///Выполнение команды операционной системы от имени программы с сохранением результата
 std::string ArtificialIntelligence::exec(std::string cmd) {
     FILE* pipe = popen(cmd.c_str(), "r");
     if (!pipe) return "ERROR";
-    std::string result;
-    /*
-    char buffer[128];
-    while(!feof(pipe)) {
-    if(fgets(buffer, 128, pipe) != NULL)
-    result += buffer;
-    }
-    pclose(pipe);
-    */
-    return result;
+    return "";
 }
 
 int ArtificialIntelligence::action(int a,float time)
 {
     //Передаем массив нажимаемых кнопок
-    //Содержит команды командной строки
     std::string cmd,cmd2,act,times;
     FILE *ptr;
     exec("wmctrl -a 'FCEUX 2.2.1'");
@@ -91,32 +79,45 @@ int ArtificialIntelligence::action(int a,float time)
 
 ArtificialIntelligence::~ArtificialIntelligence()
 {
-
+    system("killall -9 fceux");
 }
 
-void ArtificialIntelligence::MainLoop()
+void ArtificialIntelligence::MainLoop(int & enabled)
 {
     TargetWindow screenShot("FCEUX 2.2.2");
+    std::vector< std::vector < RGB > > screenshot;
     //Main loop
     int i = 0;
-    while(1==1){
+    while(enabled > 0){
         exec("wmctrl -a 'FCEUX 2.2.2'");
         int act=rand() % 3;
         int time_duration=rand() % 5;
         //Совершение выбранного переменной act действия в течении времени time
         action(act,0.1*time_duration);
-        std::vector< std::vector < RGB > > output;
-        screenShot.getScreenShot(i,output);
-        analyse(output);
+        screenShot.getScreenShot(i,screenshot);
+        this->analyze(screenshot);
         ++i;
         sleep(3);
     }
 }
 
-int ArtificialIntelligence::analyse(std::vector<std::vector<RGB> > &output)
+void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &output)
 {
-    std::cout<<"output.size:"<<output.size()<<std::endl;
-    std::cout<<"output[1].size:"<<output[1].size()<<std::endl;
+    map< RGB , vector<DecartCoordinates> > condReflexes;
+    for( unsigned int y=0; y<output.size() ; ++y ) {
+        for( unsigned int x=0; x<output[y].size() ; ++x ){
+            RGB color = output[y][x];
+            if(condReflexes[color].size() == 0 ){
+                vector<DecartCoordinates> tmpDC;
+                condReflexes[color] = tmpDC;
+            }
+            condReflexes[color].push_back({x,y});
+        }
+    }
+
+    for(auto key : condReflexes){
+        cout<<key.second.size()<<endl;
+    }
 }
 
 

@@ -5,22 +5,31 @@
 
 #include "artificial_intelligence.h"
 
-void ArtificialIntelligenceThread(){
+void ArtificialIntelligenceThread(int & enabled){
     ArtificialIntelligence ai;
+    ai.MainLoop(enabled);
 }
 
 int main(int argc, char *argv[])
 {
-    std::thread artificialIntelligence(ArtificialIntelligenceThread);
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    int enabled = true;
+    //Start AI
+    std::thread artificialIntelligence(ArtificialIntelligenceThread,
+                                       std::ref(enabled));
+
+    //Start GUI
     QApplication app(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QWebEngineView view;
     system("rm output/screenshots/*");
     view.setUrl(QUrl("qrc:///gui-html-files/index.html"));
     view.resize(1024, 600);
     view.show();
+
     int res = app.exec();
 
+    //End AI
+    enabled = false;
     artificialIntelligence.join();
     return res;
 }
