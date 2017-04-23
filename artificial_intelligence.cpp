@@ -3,6 +3,14 @@
 ArtificialIntelligence::ArtificialIntelligence()
 {
     double time_action = 0.1;
+    workersCount = 5;
+    isWorkersEnabled = true;
+
+    for(int i=0;i<workersCount;++i){
+        workers.push_back(std::thread(&ArtificialIntelligence::workerDispatcher,this,i));
+    }
+
+    frameID = 0;
     system("fceux ../input/nintendo_games/Mario.nes &");
     //Ждать
     sleep(3);
@@ -14,8 +22,6 @@ ArtificialIntelligence::ArtificialIntelligence()
     action(5,time_action);
     //Ждать
     sleep(4);
-    // Init vars
-    frameID = 0;
 }
 
 ///Выполнение команды операционной системы от имени программы с сохранением результата
@@ -33,42 +39,42 @@ int ArtificialIntelligence::action(int a,float time)
     exec("wmctrl -a 'FCEUX 2.2.2'");
     times=std::to_string(time);
 
-     switch (a)
-      {
-         case 0:
-            cmd="";//
+    switch (a)
+    {
+    case 0:
+        cmd="";//
         cmd2="";
         act="Ничего не делаю в течении "+times+" сек.";
-            break;
-         case 1:
-            cmd= "xdotool keydown Right";
+        break;
+    case 1:
+        cmd= "xdotool keydown Right";
         cmd2= "xdotool keyup Right";
-            act="Двигаюсь вправо в течении "+times+" сек.";
+        act="Двигаюсь вправо в течении "+times+" сек.";
         break;
-         case 2:
-            cmd= "xdotool keydown f+Right";//Прыжок
+    case 2:
+        cmd= "xdotool keydown f+Right";//Прыжок
         cmd2= "xdotool keyup f+Right";
-            act="Прыгаю влево в течении "+times+" сек.";
+        act="Прыгаю влево в течении "+times+" сек.";
         break;
-         case 3:
-            cmd= "xdotool keydown f+Left";//Прыжок
+    case 3:
+        cmd= "xdotool keydown f+Left";//Прыжок
         cmd2= "xdotool keyup f+Left";
-            act="Прыгаю вправо в течении "+times+" сек.";
+        act="Прыгаю вправо в течении "+times+" сек.";
         break;
-         case 4:
-            cmd= "xdotool keydown Left";
-            cmd2="xdotool keyup Left";
+    case 4:
+        cmd= "xdotool keydown Left";
+        cmd2="xdotool keyup Left";
         act="Двигаюсь влево в течении "+times+" сек.";
-            break;
-         case 5:
-            cmd= "xdotool keydown Return;";
-            cmd2="xdotool keyup Return;";
+        break;
+    case 5:
+        cmd= "xdotool keydown Return;";
+        cmd2="xdotool keyup Return;";
         act="Нажимаю Enter  в течении "+times+" сек.";
         break;
-      }
+    }
 
     act=act+"\n";
-    printf(act.c_str());
+    printf("%s",act.c_str());
 
     //Input command in command line
     ptr = popen(cmd.c_str(), "r");
@@ -82,12 +88,18 @@ int ArtificialIntelligence::action(int a,float time)
 ArtificialIntelligence::~ArtificialIntelligence()
 {
     system("killall -9 fceux");
+    //Notify about close
+    cv.notify_all();
+    for(int i=0;i<workersCount;++i){
+        workers[i].join();
+    }
 }
 
 void ArtificialIntelligence::MainLoop(int & enabled)
 {
+    _enabled = enabled;
     TargetWindow screenShot("FCEUX 2.2.2");
-    std::vector< std::vector < RGB > > screenshot;
+    Image screenshot;
     //Main loop
     while(enabled > 0){
         frameIDString = std::to_string(frameID);
@@ -103,26 +115,29 @@ void ArtificialIntelligence::MainLoop(int & enabled)
     }
 }
 
-void ArtificialIntelligence::diff2Images(std::vector< std::vector<RGB> > &image1 ,
-                                         std::vector< std::vector<RGB> > &image2 ){
+void ArtificialIntelligence::diff2Images(Image &image1 ,
+                                         Image &image2 ){
+    if(isWorkersEnabled){
+        this->diff2ImagesWorker(image1,image2);
+        CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,100);
+        return;
+    }
+
     if(diff.size()>0)diff.clear();
 
     #if defined(_OPENMP)
-        #pragma omp parallel for
+    #pragma omp parallel for
     #endif
-    for( unsigned int y=0; y < image1.size() ; ++y ) {
-        for( unsigned int x=0; x < image1[y].size() ; ++x ){
-            if( image1[y][x] != image2[y][x] ){
+    for( unsigned short y=0; y < image1.data.size() ; ++y ) {
+        for( unsigned short x=0; x < image1.data[y].size() ; ++x ){
+            if( image1.data[y][x] != image2.data[y][x] ){
                 diff.push_back({x,y});
             }
         }
     }
 }
 
-
-
-
-void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &outputScreenshot)
+void ArtificialIntelligence::analyze(Image &outputScreenshot)
 {
     map< RGB , vector<DecartCoordinates> > condReflexes;
 
@@ -131,14 +146,14 @@ void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &outputScre
         isFirstTime = false;
     }else {
         this->diff2Images(outputScreenshot,oldScreenshot);
-        Images diffImage(diff,256,240);
+        Images diffImage(diff,outputScreenshot.width,outputScreenshot.height);
         std::string path = "output/screenshots/screenshot-"+frameIDString+"-diff.jpg";
         diffImage.saveImage(path);
     }
 
-    for( unsigned int y=0; y < outputScreenshot.size() ; ++y ) {
-        for( unsigned int x=0; x < outputScreenshot[y].size() ; ++x ){
-            RGB color = outputScreenshot[y][x];
+    for( unsigned short y=0; y < outputScreenshot.data.size() ; ++y ) {
+        for( unsigned short x=0; x < outputScreenshot.data[y].size() ; ++x ){
+            RGB color = outputScreenshot.data[y][x];
             if(condReflexes[color].size() == 0 ){
                 vector<DecartCoordinates> tmpDC;
                 condReflexes[color] = tmpDC;
@@ -150,6 +165,48 @@ void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &outputScre
 
     for(auto key : condReflexes){
         cout<<key.second.size()<<endl;
+    }
+}
+
+void ArtificialIntelligence::analyzeConvolutionalNeuralNetwork(Image &output)
+{
+    (void) output;
+}
+
+//Workers
+void ArtificialIntelligence::workerDispatcher(int threadId)
+{
+    std::cout<<"Worker start:"<<threadId<<std::endl;
+    int i=0;
+    while(1==1){
+        ++i;
+        std::unique_lock<std::mutex> lk(mWorkers);
+        cv.wait(lk);
+        if(_enabled == 0)break;
+        std::cerr<<"Thread"<<threadId<<" Iteration:"<<i+1<<std::endl;
+    }
+}
+
+void ArtificialIntelligence::CallFunctionInWorker(void *function,int sizeForDiv)
+{
+    activeFunctionForWorker = function;
+    cv.notify_all();
+}
+
+void ArtificialIntelligence::diff2ImagesWorker(Image &image1 ,
+                                         Image &image2 ){
+
+    if(diff.size()>0)diff.clear();
+
+    #if defined(_OPENMP)
+    #pragma omp parallel for
+    #endif
+    for( unsigned short y=0; y < image1.data.size() ; ++y ) {
+        for( unsigned short x=0; x < image1.data[y].size() ; ++x ){
+            if( image1.data[y][x] != image2.data[y][x] ){
+                diff.push_back({x,y});
+            }
+        }
     }
 }
 

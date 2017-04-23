@@ -1,6 +1,8 @@
 #ifndef DATA_TYPES_H
 #define DATA_TYPES_H
 
+#include <vector>
+
 struct __attribute__((__packed__)) RGB {
     unsigned char r;
     unsigned char g;
@@ -21,4 +23,9 @@ struct __attribute__((__packed__)) DecartCoordinates {
     unsigned short y;
 };
 
+struct Image {
+    unsigned short width;
+    unsigned short height;
+    std::vector<std::vector<RGB> > data;
+};
 #endif // DATA_TYPES_H

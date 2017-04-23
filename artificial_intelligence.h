@@ -9,6 +9,11 @@
 #include <stdio.h>
 #include <map>
 #include <vector>
+#include <thread>
+#include <condition_variable>
+#include <mutex>
+
+
 
 #include "images.h"
 
@@ -23,6 +28,7 @@
 #endif
 
 using namespace std;
+
 /**
  * @brief The ArtificialIntelligence class
  */
@@ -33,14 +39,28 @@ public:
     ~ArtificialIntelligence();
     void MainLoop(int & enabled);
 private:
-    void analyze(std::vector< std::vector < RGB > > & output);
+    //Current thread
+    void analyze(Image & output);
+    void analyzeConvolutionalNeuralNetwork(Image & output);
     int action(int a, float time);
     std::string exec(std::string cmd);
-    void diff2Images(std::vector<std::vector<RGB> > &image1, std::vector<std::vector<RGB> > &image2);
-    std::vector< std::vector<RGB> > oldScreenshot;
+    void diff2Images(Image &image1, Image &image2);
+    Image oldScreenshot;
     std::vector< DecartCoordinates > diff;
     int frameID;
     string frameIDString;
+    bool _enabled;
+    //Workers
+    void workerDispatcher(int threadId);
+    std::vector<std::thread> workers;
+    int workersCount;
+    void CallFunctionInWorker(void * function,int sizeForDiv);
+    std::mutex mWorkers;
+    std::condition_variable cv;
+    int inputSizeForWorkers;
+    void *activeFunctionForWorker;
+    void diff2ImagesWorker(Image &image1, Image &image2);
+    bool isWorkersEnabled;
 };
 
 #endif // ARTIFICIAL_INTELLIGENCE_H

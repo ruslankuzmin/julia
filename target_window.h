@@ -15,7 +15,7 @@ class TargetWindow
 {
 public:
     TargetWindow(std::string windowTitle);
-    void getScreenShot(int screenID,std::vector< std::vector < RGB > > & output);
+    void getScreenShot(int screenID,Image & output);
     Window window;
 private:
     int get_shift(int mask);

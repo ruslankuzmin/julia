@@ -33,4 +33,6 @@ HEADERS += \
     images.h
 
 DISTFILES += \
-    CodeTrash
+    CodeTrash \
+    TODO \
+    README.md
