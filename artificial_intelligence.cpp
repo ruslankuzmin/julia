@@ -14,6 +14,8 @@ ArtificialIntelligence::ArtificialIntelligence()
     action(5,time_action);
     //Ждать
     sleep(4);
+    // Init vars
+    frameID = 0;
 }
 
 ///Выполнение команды операционной системы от имени программы с сохранением результата
@@ -28,7 +30,7 @@ int ArtificialIntelligence::action(int a,float time)
     //Передаем массив нажимаемых кнопок
     std::string cmd,cmd2,act,times;
     FILE *ptr;
-    exec("wmctrl -a 'FCEUX 2.2.1'");
+    exec("wmctrl -a 'FCEUX 2.2.2'");
     times=std::to_string(time);
 
      switch (a)
@@ -87,26 +89,56 @@ void ArtificialIntelligence::MainLoop(int & enabled)
     TargetWindow screenShot("FCEUX 2.2.2");
     std::vector< std::vector < RGB > > screenshot;
     //Main loop
-    int i = 0;
     while(enabled > 0){
+        frameIDString = std::to_string(frameID);
         exec("wmctrl -a 'FCEUX 2.2.2'");
         int act=rand() % 3;
         int time_duration=rand() % 5;
         //Совершение выбранного переменной act действия в течении времени time
         action(act,0.1*time_duration);
-        screenShot.getScreenShot(i,screenshot);
+        screenShot.getScreenShot(frameID,screenshot);
         this->analyze(screenshot);
-        ++i;
+        ++frameID;
         sleep(3);
     }
 }
 
-void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &output)
+void ArtificialIntelligence::diff2Images(std::vector< std::vector<RGB> > &image1 ,
+                                         std::vector< std::vector<RGB> > &image2 ){
+    if(diff.size()>0)diff.clear();
+
+    #if defined(_OPENMP)
+        #pragma omp parallel for
+    #endif
+    for( unsigned int y=0; y < image1.size() ; ++y ) {
+        for( unsigned int x=0; x < image1[y].size() ; ++x ){
+            if( image1[y][x] != image2[y][x] ){
+                diff.push_back({x,y});
+            }
+        }
+    }
+}
+
+
+
+
+void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &outputScreenshot)
 {
     map< RGB , vector<DecartCoordinates> > condReflexes;
-    for( unsigned int y=0; y<output.size() ; ++y ) {
-        for( unsigned int x=0; x<output[y].size() ; ++x ){
-            RGB color = output[y][x];
+
+    static bool isFirstTime = true;
+    if(isFirstTime){
+        isFirstTime = false;
+    }else {
+        this->diff2Images(outputScreenshot,oldScreenshot);
+        Images diffImage(diff,256,240);
+        std::string path = "output/screenshots/screenshot-"+frameIDString+"-diff.jpg";
+        diffImage.saveImage(path);
+    }
+
+    for( unsigned int y=0; y < outputScreenshot.size() ; ++y ) {
+        for( unsigned int x=0; x < outputScreenshot[y].size() ; ++x ){
+            RGB color = outputScreenshot[y][x];
             if(condReflexes[color].size() == 0 ){
                 vector<DecartCoordinates> tmpDC;
                 condReflexes[color] = tmpDC;
@@ -114,6 +146,7 @@ void ArtificialIntelligence::analyze(std::vector< std::vector<RGB> > &output)
             condReflexes[color].push_back({x,y});
         }
     }
+    oldScreenshot = outputScreenshot;
 
     for(auto key : condReflexes){
         cout<<key.second.size()<<endl;

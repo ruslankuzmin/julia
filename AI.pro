@@ -13,9 +13,13 @@ TEMPLATE = app
 
 LIBS += -lcairo -lX11
 
+QMAKE_CXXFLAGS+= -fopenmp
+QMAKE_LFLAGS += -fopenmp
+
 SOURCES += main.cpp \
     artificial_intelligence.cpp \
-    target_window.cpp
+    target_window.cpp \
+    images.cpp
 
 CONFIG += c++11
 
@@ -25,7 +29,8 @@ RESOURCES += \
 HEADERS += \
     artificial_intelligence.h \
     target_window.h \
-    data_types.h
+    data_types.h \
+    images.h
 
 DISTFILES += \
     CodeTrash

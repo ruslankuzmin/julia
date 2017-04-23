@@ -4,11 +4,11 @@
 #include <malloc.h>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <cstring>
 #include <cairo/cairo.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include "3rdparty/bmp/bitmap_image.hpp"
 #include "data_types.h"
 
 class TargetWindow

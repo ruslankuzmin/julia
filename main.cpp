@@ -12,10 +12,10 @@ void ArtificialIntelligenceThread(int & enabled){
 
 int main(int argc, char *argv[])
 {
-    int enabled = true;
+    int isRun = true;
     //Start AI
     std::thread artificialIntelligence(ArtificialIntelligenceThread,
-                                       std::ref(enabled));
+                                       std::ref(isRun));
 
     //Start GUI
     QApplication app(argc, argv);
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     int res = app.exec();
 
     //End AI
-    enabled = false;
+    isRun = false;
     artificialIntelligence.join();
     return res;
 }
