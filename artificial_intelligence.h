@@ -29,6 +29,8 @@
 
 using namespace std;
 
+class ArtificialIntelligence;
+typedef void (ArtificialIntelligence::*AIfunction)(int,int);
 /**
  * @brief The ArtificialIntelligence class
  */
@@ -54,13 +56,17 @@ private:
     void workerDispatcher(int threadId);
     std::vector<std::thread> workers;
     int workersCount;
-    void CallFunctionInWorker(void * function,int sizeForDiv);
+    void CallFunctionInWorker(AIfunction function,int sizeForDiv);
     std::mutex mWorkers;
     std::condition_variable cv;
     int inputSizeForWorkers;
-    void *activeFunctionForWorker;
-    void diff2ImagesWorker(Image &image1, Image &image2);
+    AIfunction activeFunctionForWorker;
+    void diff2ImagesWorker(int iterBegin,int iterEnd);
     bool isWorkersEnabled;
+    void *arg1;
+    void *arg2;
+    void *arg3;
+    void *arg4;
 };
 
 #endif // ARTIFICIAL_INTELLIGENCE_H

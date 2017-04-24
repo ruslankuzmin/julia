@@ -118,13 +118,14 @@ void ArtificialIntelligence::MainLoop(int & enabled)
 void ArtificialIntelligence::diff2Images(Image &image1 ,
                                          Image &image2 ){
     if(isWorkersEnabled){
-        this->diff2ImagesWorker(image1,image2);
-        CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,100);
+        cout<<"Calling worker";
+        arg1 = &image1;
+        arg2 = &image2;
+        diff.clear();
+        CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,image1.data.size());
         return;
     }
-
-    if(diff.size()>0)diff.clear();
-
+    /*
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
@@ -134,7 +135,7 @@ void ArtificialIntelligence::diff2Images(Image &image1 ,
                 diff.push_back({x,y});
             }
         }
-    }
+    }*/
 }
 
 void ArtificialIntelligence::analyze(Image &outputScreenshot)
@@ -184,26 +185,30 @@ void ArtificialIntelligence::workerDispatcher(int threadId)
         cv.wait(lk);
         if(_enabled == 0)break;
         std::cerr<<"Thread"<<threadId<<" Iteration:"<<i+1<<std::endl;
+        int avgInputForOneWorker = ceil(inputSizeForWorkers/(double)workersCount);
+        int iterBegin = threadId * avgInputForOneWorker;
+        int iterEnd = ( threadId+1 ) * avgInputForOneWorker;
+        if(iterEnd>inputSizeForWorkers)iterEnd = inputSizeForWorkers - 1;
+        (this->*activeFunctionForWorker)(iterBegin,iterEnd);
     }
 }
 
-void ArtificialIntelligence::CallFunctionInWorker(void *function,int sizeForDiv)
+void ArtificialIntelligence::CallFunctionInWorker(AIfunction function,int sizeForDiv)
 {
+    inputSizeForWorkers  = sizeForDiv;
     activeFunctionForWorker = function;
     cv.notify_all();
 }
 
-void ArtificialIntelligence::diff2ImagesWorker(Image &image1 ,
-                                         Image &image2 ){
+void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
 
-    if(diff.size()>0)diff.clear();
+    cout<<"IterBegin = "<<iterBegin<<". IterEnd = "<<iterEnd<<endl;
 
-    #if defined(_OPENMP)
-    #pragma omp parallel for
-    #endif
-    for( unsigned short y=0; y < image1.data.size() ; ++y ) {
-        for( unsigned short x=0; x < image1.data[y].size() ; ++x ){
-            if( image1.data[y][x] != image2.data[y][x] ){
+    Image * image1 = (Image *)arg1;
+    Image * image2 = (Image *)arg2;
+    for( unsigned short y=iterBegin; y < iterEnd ; ++y ) {
+        for( unsigned short x=0; x < image1->data[y].size() ; ++x ){
+            if( image1->data[y][x] != image2->data[y][x] ){
                 diff.push_back({x,y});
             }
         }
