@@ -125,7 +125,7 @@ void ArtificialIntelligence::diff2Images(Image &image1 ,
         CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,image1.data.size());
         return;
     }
-    /*
+
     #if defined(_OPENMP)
     #pragma omp parallel for
     #endif
@@ -135,7 +135,7 @@ void ArtificialIntelligence::diff2Images(Image &image1 ,
                 diff.push_back({x,y});
             }
         }
-    }*/
+    }
 }
 
 void ArtificialIntelligence::analyze(Image &outputScreenshot)
@@ -190,6 +190,8 @@ void ArtificialIntelligence::workerDispatcher(int threadId)
         int iterEnd = ( threadId+1 ) * avgInputForOneWorker;
         if(iterEnd>inputSizeForWorkers)iterEnd = inputSizeForWorkers - 1;
         (this->*activeFunctionForWorker)(iterBegin,iterEnd);
+        finishedWorkersCount++;
+        //if(finishedWorkersCount==workersCount) cvMainThread.notify_all();
     }
 }
 
@@ -197,13 +199,14 @@ void ArtificialIntelligence::CallFunctionInWorker(AIfunction function,int sizeFo
 {
     inputSizeForWorkers  = sizeForDiv;
     activeFunctionForWorker = function;
+    finishedWorkersCount = 0;
     cv.notify_all();
+    while(finishedWorkersCount!=workersCount){};
+    //std::unique_lock<std::mutex> lk(mMainThread);
+    //cvMainThread.wait(lk);
 }
 
 void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
-
-    cout<<"IterBegin = "<<iterBegin<<". IterEnd = "<<iterEnd<<endl;
-
     Image * image1 = (Image *)arg1;
     Image * image2 = (Image *)arg2;
     for( unsigned short y=iterBegin; y < iterEnd ; ++y ) {

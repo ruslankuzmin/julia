@@ -56,9 +56,12 @@ private:
     void workerDispatcher(int threadId);
     std::vector<std::thread> workers;
     int workersCount;
+    int finishedWorkersCount;
     void CallFunctionInWorker(AIfunction function,int sizeForDiv);
     std::mutex mWorkers;
+    std::mutex mMainThread;
     std::condition_variable cv;
+    std::condition_variable cvMainThread;
     int inputSizeForWorkers;
     AIfunction activeFunctionForWorker;
     void diff2ImagesWorker(int iterBegin,int iterEnd);
