@@ -1,15 +1,9 @@
 #include "artificial_intelligence.h"
 
 ArtificialIntelligence::ArtificialIntelligence()
+    : workers(this)
 {
     double time_action = 0.1;
-    workersCount = 5;
-    isWorkersEnabled = true;
-
-    for(int i=0;i<workersCount;++i){
-        workers.push_back(std::thread(&ArtificialIntelligence::workerDispatcher,this,i));
-    }
-
     frameID = 0;
     system("fceux ../input/nintendo_games/Mario.nes &");
     //Ждать
@@ -88,16 +82,11 @@ int ArtificialIntelligence::action(int a,float time)
 ArtificialIntelligence::~ArtificialIntelligence()
 {
     system("killall -9 fceux");
-    //Notify about close
-    cv.notify_all();
-    for(int i=0;i<workersCount;++i){
-        workers[i].join();
-    }
 }
 
 void ArtificialIntelligence::MainLoop(int & enabled)
 {
-    _enabled = enabled;
+    workers.enabled = &enabled;
     TargetWindow screenShot("FCEUX 2.2.2");
     Image screenshot;
     //Main loop
@@ -117,12 +106,12 @@ void ArtificialIntelligence::MainLoop(int & enabled)
 
 void ArtificialIntelligence::diff2Images(Image &image1 ,
                                          Image &image2 ){
-    if(isWorkersEnabled){
+    if(workers.isWorkersEnabled){
         cout<<"Calling worker";
-        arg1 = &image1;
-        arg2 = &image2;
+        workers.arg1 = &image1;
+        workers.arg2 = &image2;
         diff.clear();
-        CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,image1.data.size());
+        workers.CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,image1.data.size());
         return;
     }
 
@@ -136,6 +125,21 @@ void ArtificialIntelligence::diff2Images(Image &image1 ,
             }
         }
     }
+}
+
+void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
+    Image * image1 = (Image *)workers.arg1;
+    Image * image2 = (Image *)workers.arg2;
+    std::cerr<<iterBegin<<"begin"<<iterEnd<<std::endl;
+    for( unsigned short y=iterBegin; y < iterEnd ; ++y ) {
+        for( unsigned short x=0; x < image1->data[y].size() ; ++x ){
+            if( image1->data[y][x] != image2->data[y][x] ){
+                diff.push_back({x,y});
+
+            }
+        }
+    }
+    std::cerr<<iterBegin<<"end"<<iterEnd<<std::endl;
 }
 
 void ArtificialIntelligence::analyze(Image &outputScreenshot)
@@ -174,49 +178,8 @@ void ArtificialIntelligence::analyzeConvolutionalNeuralNetwork(Image &output)
     (void) output;
 }
 
-//Workers
-void ArtificialIntelligence::workerDispatcher(int threadId)
-{
-    std::cout<<"Worker start:"<<threadId<<std::endl;
-    int i=0;
-    while(1==1){
-        ++i;
-        std::unique_lock<std::mutex> lk(mWorkers);
-        cv.wait(lk);
-        if(_enabled == 0)break;
-        std::cerr<<"Thread"<<threadId<<" Iteration:"<<i+1<<std::endl;
-        int avgInputForOneWorker = ceil(inputSizeForWorkers/(double)workersCount);
-        int iterBegin = threadId * avgInputForOneWorker;
-        int iterEnd = ( threadId+1 ) * avgInputForOneWorker;
-        if(iterEnd>inputSizeForWorkers)iterEnd = inputSizeForWorkers - 1;
-        (this->*activeFunctionForWorker)(iterBegin,iterEnd);
-        finishedWorkersCount++;
-        //if(finishedWorkersCount==workersCount) cvMainThread.notify_all();
-    }
-}
 
-void ArtificialIntelligence::CallFunctionInWorker(AIfunction function,int sizeForDiv)
-{
-    inputSizeForWorkers  = sizeForDiv;
-    activeFunctionForWorker = function;
-    finishedWorkersCount = 0;
-    cv.notify_all();
-    while(finishedWorkersCount!=workersCount){};
-    //std::unique_lock<std::mutex> lk(mMainThread);
-    //cvMainThread.wait(lk);
-}
 
-void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
-    Image * image1 = (Image *)arg1;
-    Image * image2 = (Image *)arg2;
-    for( unsigned short y=iterBegin; y < iterEnd ; ++y ) {
-        for( unsigned short x=0; x < image1->data[y].size() ; ++x ){
-            if( image1->data[y][x] != image2->data[y][x] ){
-                diff.push_back({x,y});
-            }
-        }
-    }
-}
 
 
 

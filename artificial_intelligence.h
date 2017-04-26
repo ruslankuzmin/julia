@@ -9,15 +9,11 @@
 #include <stdio.h>
 #include <map>
 #include <vector>
-#include <thread>
-#include <condition_variable>
-#include <mutex>
-
-
 
 #include "images.h"
-
+#include "worker.h"
 #include "target_window.h"
+#include "neural_networks/convolutional_nn.h"
 
 #if defined(_OPENMP)
     #include "omp.h"
@@ -29,47 +25,75 @@
 
 using namespace std;
 
-class ArtificialIntelligence;
-typedef void (ArtificialIntelligence::*AIfunction)(int,int);
 /**
- * @brief The ArtificialIntelligence class
+ * @brief Основной процесс.
  */
 class ArtificialIntelligence
 {
 public:
     ArtificialIntelligence();
     ~ArtificialIntelligence();
+    /**
+     * @brief MainLoop Главный цикл.
+     * @param enabled Отключающая главный цикл переменная.
+     */
     void MainLoop(int & enabled);
 private:
-    //Current thread
+    /**
+     * @brief analyze Анализ полученного от приложения скриншота.
+     * @param output Скриншот полученный от приложения.
+     */
     void analyze(Image & output);
+    /**
+     * @brief analyzeConvolutionalNeuralNetwork
+     * @param output
+     */
     void analyzeConvolutionalNeuralNetwork(Image & output);
+    /**
+     * @brief action Выполение действия в игре. Например прыжок или движение вперед.
+     * @param a Номер действия
+     * @param time Сколько по времени будет зажата клавиши и выолняться действие.
+     * @return
+     */
     int action(int a, float time);
+    /**
+     * @brief exec Выполнение команды приложением через терминал.
+     * @param cmd Команда
+     * @return Вывод команды.
+     */
     std::string exec(std::string cmd);
-    void diff2Images(Image &image1, Image &image2);
+    /**
+     * @brief oldScreenshot Изображение скриншота сделанного до обрабатываемого.
+     */
     Image oldScreenshot;
+    /**
+     * @brief diff Сохраненная разница пикселей двух изображений.
+     */
     std::vector< DecartCoordinates > diff;
+    /**
+     * @brief frameID Порядковый номер обрабатываемого скриншота.
+     */
     int frameID;
+    /**
+     * @brief frameIDString Порядковый номер обрабатываемого скриншота в виде строковой переменной.
+     */
     string frameIDString;
-    bool _enabled;
-    //Workers
-    void workerDispatcher(int threadId);
-    std::vector<std::thread> workers;
-    int workersCount;
-    int finishedWorkersCount;
-    void CallFunctionInWorker(AIfunction function,int sizeForDiv);
-    std::mutex mWorkers;
-    std::mutex mMainThread;
-    std::condition_variable cv;
-    std::condition_variable cvMainThread;
-    int inputSizeForWorkers;
-    AIfunction activeFunctionForWorker;
+    /**
+     * @brief workers
+     */
+    Worker workers;
+    //Main functions
+    /**
+     * @brief diff2Images Сравнение двух последовательных изображений попиксельно для получения списка различающихся пискселей
+     * @param image1 Первое изображение
+     * @param image2 Второе изображение
+     */
+    void diff2Images(Image &image1, Image &image2);
     void diff2ImagesWorker(int iterBegin,int iterEnd);
-    bool isWorkersEnabled;
-    void *arg1;
-    void *arg2;
-    void *arg3;
-    void *arg4;
+    /**
+     * @brief cnn Свёрточная нейронная сеть. Добавлена ради эксперимента.
+     */
+    ConvolutionalNN cnn;
 };
 
 #endif // ARTIFICIAL_INTELLIGENCE_H

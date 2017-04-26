@@ -19,7 +19,9 @@ QMAKE_LFLAGS += -fopenmp
 SOURCES += main.cpp \
     artificial_intelligence.cpp \
     target_window.cpp \
-    images.cpp
+    images.cpp \
+    worker.cpp \
+    neural_networks/convolutional_nn.cpp
 
 CONFIG += c++11
 
@@ -30,7 +32,9 @@ HEADERS += \
     artificial_intelligence.h \
     target_window.h \
     data_types.h \
-    images.h
+    images.h \
+    worker.h \
+    neural_networks/convolutional_nn.h
 
 DISTFILES += \
     CodeTrash \

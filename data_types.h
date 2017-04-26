@@ -2,7 +2,9 @@
 #define DATA_TYPES_H
 
 #include <vector>
-
+/**
+ * @brief Объект цвета.
+ */
 struct __attribute__((__packed__)) RGB {
     unsigned char r;
     unsigned char g;
@@ -18,11 +20,17 @@ struct __attribute__((__packed__)) RGB {
     }
 };
 
+/**
+ * @brief Объект координат.
+ */
 struct __attribute__((__packed__)) DecartCoordinates {
     unsigned short x;
     unsigned short y;
 };
 
+/**
+ * @brief Объект изображений.
+ */
 struct Image {
     unsigned short width;
     unsigned short height;
