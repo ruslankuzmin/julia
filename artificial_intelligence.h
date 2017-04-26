@@ -70,6 +70,7 @@ private:
      * @brief diff Сохраненная разница пикселей двух изображений.
      */
     std::vector< DecartCoordinates > diff;
+    ColorMap condReflexes;
     /**
      * @brief frameID Порядковый номер обрабатываемого скриншота.
      */
@@ -90,6 +91,10 @@ private:
      */
     void diff2Images(Image &image1, Image &image2);
     void diff2ImagesWorker(int iterBegin,int iterEnd);
+    /**
+     * @brief findConcurrencesInImage
+     */
+    void findConcurrencesInImage(Image &image);
     /**
      * @brief cnn Свёрточная нейронная сеть. Добавлена ради эксперимента.
      */

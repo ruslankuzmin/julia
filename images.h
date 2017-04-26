@@ -4,6 +4,8 @@
 #include <QString>
 #include <QImage>
 #include <vector>
+#include <map>
+
 #include "data_types.h"
 
 /**
@@ -19,6 +21,7 @@ public:
      * @param height Высота изображения.
      */
     Images(std::vector< DecartCoordinates > & image, int width , int height);
+    Images(ColorMap & image, int width , int height);
     /**
      * @brief saveImage Сохранение изображения в виде картинки.
      * @param path

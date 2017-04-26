@@ -2,6 +2,8 @@
 #define DATA_TYPES_H
 
 #include <vector>
+#include <map>
+
 /**
  * @brief Объект цвета.
  */
@@ -36,4 +38,7 @@ struct Image {
     unsigned short height;
     std::vector<std::vector<RGB> > data;
 };
+
+typedef std::map< RGB , std::vector<DecartCoordinates> > ColorMap;
+
 #endif // DATA_TYPES_H

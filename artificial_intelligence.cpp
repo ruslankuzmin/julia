@@ -142,23 +142,12 @@ void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
     std::cerr<<iterBegin<<"end"<<iterEnd<<std::endl;
 }
 
-void ArtificialIntelligence::analyze(Image &outputScreenshot)
+void ArtificialIntelligence::findConcurrencesInImage(Image &image)
 {
-    map< RGB , vector<DecartCoordinates> > condReflexes;
-
-    static bool isFirstTime = true;
-    if(isFirstTime){
-        isFirstTime = false;
-    }else {
-        this->diff2Images(outputScreenshot,oldScreenshot);
-        Images diffImage(diff,outputScreenshot.width,outputScreenshot.height);
-        std::string path = "output/screenshots/screenshot-"+frameIDString+"-diff.jpg";
-        diffImage.saveImage(path);
-    }
-
-    for( unsigned short y=0; y < outputScreenshot.data.size() ; ++y ) {
-        for( unsigned short x=0; x < outputScreenshot.data[y].size() ; ++x ){
-            RGB color = outputScreenshot.data[y][x];
+    condReflexes.clear();
+    for( unsigned short y=0; y < image.data.size() ; ++y ) {
+        for( unsigned short x=0; x < image.data[y].size() ; ++x ){
+            RGB color = image.data[y][x];
             if(condReflexes[color].size() == 0 ){
                 vector<DecartCoordinates> tmpDC;
                 condReflexes[color] = tmpDC;
@@ -166,11 +155,27 @@ void ArtificialIntelligence::analyze(Image &outputScreenshot)
             condReflexes[color].push_back({x,y});
         }
     }
-    oldScreenshot = outputScreenshot;
+}
 
-    for(auto key : condReflexes){
-        cout<<key.second.size()<<endl;
+void ArtificialIntelligence::analyze(Image &outputScreenshot)
+{
+    static bool isFirstFrame = true;
+    if(isFirstFrame){
+        isFirstFrame = false;
+    }else {
+        this->diff2Images(outputScreenshot,oldScreenshot);
+        Images diffImage(diff,outputScreenshot.width,outputScreenshot.height);
+        std::string path = "output/screenshots/screenshot-"+frameIDString+"-diff.png";
+        diffImage.saveImage(path);
     }
+
+    this->findConcurrencesInImage(outputScreenshot);
+    Images concurrencesImage(condReflexes,outputScreenshot.width,outputScreenshot.height);
+    std::string pathReflexes = "output/screenshots/screenshot-"+frameIDString+"-reflexes.png";
+    concurrencesImage.saveImage(pathReflexes);
+
+
+    oldScreenshot = outputScreenshot;
 }
 
 void ArtificialIntelligence::analyzeConvolutionalNeuralNetwork(Image &output)
