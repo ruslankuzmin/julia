@@ -180,6 +180,7 @@ void ArtificialIntelligence::findRepeatedPatternsInImage(Image & image)
     int min_height = 3;
     //Wrong
     //if the same then save
+    /*
     for( unsigned short y=0; y < image.data.size() ; ++y ) {
         for( unsigned short x=0; x < image.data[y].size() - min_width ; ++x ){
             RGB color = image.data[y][x];
@@ -191,7 +192,7 @@ void ArtificialIntelligence::findRepeatedPatternsInImage(Image & image)
             }
         }
     }
-
+    */
 }
 
 void ArtificialIntelligence::analyze(Image &outputScreenshot)

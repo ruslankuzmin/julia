@@ -1,6 +1,8 @@
 #ifndef TARGET_SOUND_H
 #define TARGET_SOUND_H
 
+#include <iostream>
+
 #include "AL/al.h"
 #include "AL/alc.h"
 

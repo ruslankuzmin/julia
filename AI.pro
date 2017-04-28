@@ -13,8 +13,11 @@ TEMPLATE = app
 
 LIBS += -lcairo -lX11
 
-QMAKE_CXXFLAGS+= -fopenmp `pkg-config --cflags openal`
-QMAKE_LFLAGS += -fopenmp `pkg-config --libs openal`
+QMAKE_CXXFLAGS+= -fopenmp
+QMAKE_LFLAGS += -fopenmp
+
+CONFIG += link_pkgconfig
+PKGCONFIG += openal
 
 SOURCES += main.cpp \
     artificial_intelligence.cpp \
