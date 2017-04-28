@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     images.cpp \
     worker.cpp \
     neural_networks/convolutional_nn.cpp \
-    target_sound.cpp
+    target_sound.cpp \
+    gui/control_ai_from_gui.cpp
 
 CONFIG += c++11
 
@@ -39,7 +40,8 @@ HEADERS += \
     images.h \
     worker.h \
     neural_networks/convolutional_nn.h \
-    target_sound.h
+    target_sound.h \
+    gui/control_ai_from_gui.h
 
 DISTFILES += \
     CodeTrash \
