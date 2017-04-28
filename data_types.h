@@ -39,6 +39,15 @@ struct Image {
     std::vector<std::vector<RGB> > data;
 };
 
+
+struct __attribute__((__packed__)) FragmentPixel {
+    unsigned short x;
+    unsigned short y;
+    RGB color;
+};
+
+
+typedef std::vector<FragmentPixel> Fragment;
 typedef std::map< RGB , std::vector<DecartCoordinates> > ColorMap;
 
 #endif // DATA_TYPES_H

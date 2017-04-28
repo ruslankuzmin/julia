@@ -71,6 +71,8 @@ private:
      */
     std::vector< DecartCoordinates > diff;
     ColorMap condReflexes;
+    std::vector<Fragment> fragments;
+
     /**
      * @brief frameID Порядковый номер обрабатываемого скриншота.
      */
@@ -95,6 +97,11 @@ private:
      * @brief findConcurrencesInImage
      */
     void findConcurrencesInImage(Image &image);
+    void findConcurrencesInImageWorker(int iterBegin,int iterEnd);
+    /**
+     * @brief findRepeatedPatternsInImage
+     */
+    void findRepeatedPatternsInImage(Image &outputScreenshot);
     /**
      * @brief cnn Свёрточная нейронная сеть. Добавлена ради эксперимента.
      */

@@ -106,11 +106,10 @@ void ArtificialIntelligence::MainLoop(int & enabled)
 
 void ArtificialIntelligence::diff2Images(Image &image1 ,
                                          Image &image2 ){
+    diff.clear();
     if(workers.isWorkersEnabled){
-        cout<<"Calling worker";
         workers.arg1 = &image1;
         workers.arg2 = &image2;
-        diff.clear();
         workers.CallFunctionInWorker(&ArtificialIntelligence::diff2ImagesWorker,image1.data.size());
         return;
     }
@@ -145,6 +144,12 @@ void ArtificialIntelligence::diff2ImagesWorker(int iterBegin,int iterEnd){
 void ArtificialIntelligence::findConcurrencesInImage(Image &image)
 {
     condReflexes.clear();
+    if(workers.isWorkersEnabled && 1==2){
+        workers.arg1 = &image;
+        workers.CallFunctionInWorker(&ArtificialIntelligence::findConcurrencesInImageWorker,image.data.size());
+        return;
+    }
+
     for( unsigned short y=0; y < image.data.size() ; ++y ) {
         for( unsigned short x=0; x < image.data[y].size() ; ++x ){
             RGB color = image.data[y][x];
@@ -155,6 +160,38 @@ void ArtificialIntelligence::findConcurrencesInImage(Image &image)
             condReflexes[color].push_back({x,y});
         }
     }
+}
+
+/**
+ * 200 x 200 int array of maps better
+ */
+void ArtificialIntelligence::findConcurrencesInImageWorker(int iterBegin, int iterEnd)
+{
+    Image * image = (Image *)workers.arg1;
+
+}
+
+void ArtificialIntelligence::findRepeatedPatternsInImage(Image & image)
+{
+    //Тут надо создать поиск повторяющихся фрагментов
+    //berem pervii pixel prosmatrivaem vse sovpadenia
+    // Testing
+    int min_width = 3;
+    int min_height = 3;
+    //Wrong
+    //if the same then save
+    for( unsigned short y=0; y < image.data.size() ; ++y ) {
+        for( unsigned short x=0; x < image.data[y].size() - min_width ; ++x ){
+            RGB color = image.data[y][x];
+            for(auto coord : condReflexes[color]){
+                if(image[coord.y][coord.x+1] ){
+                    Fragment fragment;
+                    fragments.push_back(fragment);
+                }
+            }
+        }
+    }
+
 }
 
 void ArtificialIntelligence::analyze(Image &outputScreenshot)
@@ -173,6 +210,8 @@ void ArtificialIntelligence::analyze(Image &outputScreenshot)
     Images concurrencesImage(condReflexes,outputScreenshot.width,outputScreenshot.height);
     std::string pathReflexes = "output/screenshots/screenshot-"+frameIDString+"-reflexes.png";
     concurrencesImage.saveImage(pathReflexes);
+
+    this->findRepeatedPatternsInImage(outputScreenshot);
 
 
     oldScreenshot = outputScreenshot;
