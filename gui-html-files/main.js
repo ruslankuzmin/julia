@@ -13,9 +13,11 @@ function changePlayState(){
     if( isPlayed ){
         $("#playButton").attr("src","images/start.png");
         $("#playButtonText").html("Продолжить");
+        //channel.objects.control.stop();
     }else{
         $("#playButton").attr("src","images/stop.png");
         $("#playButtonText").html("Сделать остановку");
+        //channel.objects.control.play();
     }
 }
 
@@ -24,7 +26,6 @@ $(document).ready(function(){
         //connect to the changed signal of a property
         channel.objects.control.refresh.connect(function() {
             alert(1);
-            channel.objects.control.play();
         });
     });
 

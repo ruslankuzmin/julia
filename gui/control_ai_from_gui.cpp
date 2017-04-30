@@ -15,10 +15,10 @@ void ControlAiFromGui::refreshState()
 
 void ControlAiFromGui::play()
 {
-    qDebug()<<"Play on";
+    qDebug()<<"Play";
 }
 
 void ControlAiFromGui::stop()
 {
-
+    qDebug()<<"Stop";
 }

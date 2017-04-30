@@ -216,14 +216,13 @@ void ArtificialIntelligence::analyze(Image &outputScreenshot,SoundChunk sound)
     concurrencesImage.saveImage(pathReflexes);
 
     this->findRepeatedPatternsInImage(outputScreenshot);
-
-
     oldScreenshot = outputScreenshot;
 }
 
 void ArtificialIntelligence::analyzeConvolutionalNeuralNetwork(Image &output)
 {
-    (void) output;
+    cnn.setImage(output);
+    int id = cnn.getID();
 }
 
 

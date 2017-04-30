@@ -2,31 +2,24 @@
 #define TARGET_SOUND_H
 
 #include <iostream>
-
+#include <AL/al.h>
+#include <AL/alc.h>
 #include "data_types.h"
 
-#include "AL/al.h"
-#include "AL/alc.h"
 
-#define BUF_COUNT 5
+const int SRATE = 44100;
+const int SSIZE = 1024;
+
 
 class TargetSound {
 public:
     TargetSound();
     ~TargetSound();
     void getSound(SoundChunk sound);
-    void playSound(SoundChunk sound);
 private:
-    void input(ALshort ** input_audio,ALshort ** output_audio);
-    ALCdevice * in_device;
-    ALCdevice * out_device;
-    ALCcontext * context;
-    ALuint al_source;
-    ALuint al_buffers[BUF_COUNT];
-    ALshort *play_buf[44100];
-    int read_buf_size;
-    int play_buf_size;
-    ALenum  error;
+    ALbyte buffer[22050];
+    ALint sample;
+    ALCdevice *device;
 };
 
 /*
