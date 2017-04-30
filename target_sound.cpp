@@ -1,6 +1,6 @@
 #include "target_sound.h"
 
-SoundManager::SoundManager() {
+TargetSound::TargetSound() {
     error = 0;
     read_buf_size = 44100;
     play_buf_size = 44100;
@@ -11,17 +11,17 @@ SoundManager::SoundManager() {
     alcMakeContextCurrent(context);
 
     const char * szDefaultCaptureDevice = alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER);
-    /*
-        while(*szDefaultCaptureDevice)
-        {
-        ALFWprintf("%s\n", pDeviceList);
-            pDeviceList += strlen(pDeviceList) + 1;
+
+    while(*szDefaultCaptureDevice)
+    {
+        //ALFWprintf("%s\n", pDeviceList);
+        //    pDeviceList += strlen(pDeviceList) + 1;
         std::cout<<"Capture devices:  "<< szDefaultCaptureDevice <<std::endl ;
-        szDefaultCaptureDevice += strlen(szDefaultCaptureDevice) + 1; //next device
-        }
-    */
+        //szDefaultCaptureDevice += strlen(szDefaultCaptureDevice) + 1; //next device
+    }
+
     in_device = alcCaptureOpenDevice (szDefaultCaptureDevice, 44100, AL_FORMAT_STEREO16, read_buf_size);
-    if( (error=  alcGetError(in_device)) != AL_NO_ERROR)
+    if( (error= alcGetError(in_device)) != AL_NO_ERROR)
         std::cout<<error<<" alcCaptureOpenDevice "<<__LINE__<<"\n";
     alGenSources(1, &al_source);
     alGenBuffers(BUF_COUNT, al_buffers);
@@ -37,7 +37,7 @@ SoundManager::SoundManager() {
         std::cout<<error<<" alcCaptureStart "<<__LINE__<<"\n";
 }
 
-void SoundManager::input(ALshort **input_audio, ALshort **output_audio) {
+void TargetSound::input(ALshort **input_audio, ALshort **output_audio) {
     ALint samples, val, state;\
 
     alGetSourcei (al_source, AL_SOURCE_STATE,  &state);
@@ -62,12 +62,17 @@ void SoundManager::input(ALshort **input_audio, ALshort **output_audio) {
 
 }
 
-void SoundManager::process()
+void TargetSound::getSound(SoundChunk sound)
 {
 
 }
 
-SoundManager::~SoundManager() {
+void TargetSound::playSound(SoundChunk sound)
+{
+
+}
+
+TargetSound::~TargetSound() {
     alcCaptureStop(in_device);
     alcCaptureCloseDevice(in_device);
 }

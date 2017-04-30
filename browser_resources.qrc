@@ -31,5 +31,6 @@
         <file>gui-html-files/jquery.min.js</file>
         <file>gui-html-files/main.js</file>
         <file>gui-html-files/style.css</file>
+        <file>gui-html-files/qwebchannel.js</file>
     </qresource>
 </RCC>

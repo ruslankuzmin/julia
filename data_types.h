@@ -46,6 +46,7 @@ struct __attribute__((__packed__)) FragmentPixel {
     RGB color;
 };
 
+typedef unsigned char * SoundChunk;
 
 typedef std::vector<FragmentPixel> Fragment;
 typedef std::map< RGB , std::vector<DecartCoordinates> > ColorMap;

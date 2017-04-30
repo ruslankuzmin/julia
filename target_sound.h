@@ -3,18 +3,21 @@
 
 #include <iostream>
 
+#include "data_types.h"
+
 #include "AL/al.h"
 #include "AL/alc.h"
 
 #define BUF_COUNT 5
 
-class SoundManager {
+class TargetSound {
 public:
-    SoundManager();
-    ~SoundManager();
-    void input(ALshort ** input_audio,ALshort ** output_audio);
-    void process();
+    TargetSound();
+    ~TargetSound();
+    void getSound(SoundChunk sound);
+    void playSound(SoundChunk sound);
 private:
+    void input(ALshort ** input_audio,ALshort ** output_audio);
     ALCdevice * in_device;
     ALCdevice * out_device;
     ALCcontext * context;

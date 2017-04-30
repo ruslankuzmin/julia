@@ -20,6 +20,14 @@ function changePlayState(){
 }
 
 $(document).ready(function(){
+    window.channel = new QWebChannel(qt.webChannelTransport, function(channel) {
+        //connect to the changed signal of a property
+        channel.objects.control.refresh.connect(function() {
+            alert(1);
+            channel.objects.control.play();
+        });
+    });
+
     changePlayState();
     $("#playButton,#playButtonText").click(function() {
         changePlayState();

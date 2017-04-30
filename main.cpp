@@ -1,10 +1,14 @@
 #include <QApplication>
 #include <QWebEngineView>
+#include <QWebChannel>
+
+#include "gui/control_ai_from_gui.h"
+
 #include <thread>
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
 
-#include "gui/control_ai_from_gui.h"
+
 #include "artificial_intelligence.h"
 
 void ArtificialIntelligenceThread(int & enabled){
@@ -26,16 +30,20 @@ int main(int argc, char *argv[])
     struct stat sb;
     if (!(stat("output/screenshots/", &sb) == 0 && S_ISDIR(sb.st_mode)))
     {
-        system("rm output/screenshots/*");
+        int err = system("rm output/screenshots/*");
+        if(err<0){
+            qDebug()<<"Cannot delete output folder.";
+        }
     }
 
     view.setUrl(QUrl("qrc:///gui-html-files/index.html"));
     view.resize(1024, 600);
 
-    ControlAiFromGui control;
-    QWebChannel * channel = new QWebChannel(&control);
-    view.page()->setWebChannel(channel);
-    channel->registerObject(QString("TheNameOfTheObjectUsed"), this);
+
+    QWebChannel channel;
+    view.page()->setWebChannel(&channel);
+    ControlAiFromGui control(&app);
+    channel.registerObject(QString("control"), &control);
 
     view.show();
     int res = app.exec();

@@ -81,14 +81,16 @@ int ArtificialIntelligence::action(int a,float time)
 
 ArtificialIntelligence::~ArtificialIntelligence()
 {
-    system("killall -9 fceux");
+    (void)system("killall -9 fceux");
 }
 
 void ArtificialIntelligence::MainLoop(int & enabled)
 {
     workers.enabled = &enabled;
     TargetWindow screenShot("FCEUX 2.2.2");
+    TargetSound targetSound;
     Image screenshot;
+    SoundChunk sound;
     //Main loop
     while(enabled > 0){
         frameIDString = std::to_string(frameID);
@@ -98,7 +100,8 @@ void ArtificialIntelligence::MainLoop(int & enabled)
         //Совершение выбранного переменной act действия в течении времени time
         action(act,0.1*time_duration);
         screenShot.getScreenShot(frameID,screenshot);
-        this->analyze(screenshot);
+        targetSound.getSound(sound);
+        this->analyze(screenshot,sound);
         ++frameID;
         sleep(3);
     }
@@ -195,7 +198,7 @@ void ArtificialIntelligence::findRepeatedPatternsInImage(Image & image)
     */
 }
 
-void ArtificialIntelligence::analyze(Image &outputScreenshot)
+void ArtificialIntelligence::analyze(Image &outputScreenshot,SoundChunk sound)
 {
     static bool isFirstFrame = true;
     if(isFirstFrame){

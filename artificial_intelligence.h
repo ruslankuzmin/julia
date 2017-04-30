@@ -13,6 +13,8 @@
 #include "images.h"
 #include "worker.h"
 #include "target_window.h"
+#include "target_sound.h"
+
 #include "neural_networks/convolutional_nn.h"
 
 #if defined(_OPENMP)
@@ -43,7 +45,7 @@ private:
      * @brief analyze Анализ полученного от приложения скриншота.
      * @param output Скриншот полученный от приложения.
      */
-    void analyze(Image & output);
+    void analyze(Image & output,SoundChunk sound);
     /**
      * @brief analyzeConvolutionalNeuralNetwork
      * @param output
