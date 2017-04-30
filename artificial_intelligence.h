@@ -12,8 +12,8 @@
 
 #include "images.h"
 #include "worker.h"
-#include "target_window.h"
-#include "target_sound.h"
+#include "input/target_window.h"
+#include "input/target_sound.h"
 
 #include "neural_networks/convolutional_nn.h"
 

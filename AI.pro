@@ -21,11 +21,11 @@ PKGCONFIG += openal
 
 SOURCES += main.cpp \
     artificial_intelligence.cpp \
-    target_window.cpp \
+    input/target_window.cpp \
     images.cpp \
     worker.cpp \
     neural_networks/convolutional_nn.cpp \
-    target_sound.cpp \
+    input/target_sound.cpp \
     gui/control_ai_from_gui.cpp
 
 CONFIG += c++11
@@ -35,12 +35,12 @@ RESOURCES += \
 
 HEADERS += \
     artificial_intelligence.h \
-    target_window.h \
+    input/target_window.h \
     data_types.h \
     images.h \
     worker.h \
     neural_networks/convolutional_nn.h \
-    target_sound.h \
+    input/target_sound.h \
     gui/control_ai_from_gui.h
 
 DISTFILES += \

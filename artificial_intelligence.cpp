@@ -5,7 +5,7 @@ ArtificialIntelligence::ArtificialIntelligence()
 {
     double time_action = 0.1;
     frameID = 0;
-    system("fceux ../input/nintendo_games/Mario.nes &");
+    system("fceux input/nintendo_games/Mario.nes &");
     //Ждать
     sleep(3);
     //Команда ОС - Активация окна с игрой
